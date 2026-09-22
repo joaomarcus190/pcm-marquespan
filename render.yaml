@@ -1,0 +1,25 @@
+services:
+  - type: web
+    name: pcm-marquespan
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app
+    healthCheckPath: /healthz
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.5
+      - key: SECRET_KEY
+        generateValue: true
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: TECH_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        fromDatabase:
+          name: pcm-marquespan-db
+          property: connectionString
+
+databases:
+  - name: pcm-marquespan-db
+    plan: free
